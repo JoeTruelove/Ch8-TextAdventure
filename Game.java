@@ -11,8 +11,8 @@
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2011.08.10
+ * @author  Joseph Truelove
+ * @version 2018.11.05
  */
 
 public class Game 
@@ -34,30 +34,52 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room cementEnt, oldCement, graveYard, brokenLab, oldGrave, oldHouse, oldSmoke, stars, supplyHouse, supplyBase, hidden, kings;
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
-        
+        cementEnt = new Room("outside the main entrance of an old Cementary");
+        oldCement = new Room("in a old looking Cementary");
+        graveYard = new Room("in the grave yard");
+        brokenLab = new Room("in front of a broken down lab");
+        oldGrave = new Room("in front of a grave that says 'J_s__h Tr__L__e'");
+        oldHouse = new Room("inside of a spooky house");
+        oldSmoke = new Room("in front of a casket of a dead smoker holding a lighter");
+        stars = new Room("a window that has a view of all of the beautiful stars");
+        supplyHouse = new Room("in a empty supply house");
+        supplyBase = new Room("in a room with a bookcase and a shovel");
+        hidden = new Room("behind the bookcase, with a stair case leading up");
+        kings = new Room("in front of a skeleton sitting in a throne with a crown on");
         // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
+        
 
-        theater.setExit("west", outside);
+        cementEnt.setExit("north", oldCement);
+        oldCement.setExit("south", cementEnt);
+        oldCement.setExit("north", graveYard);
+        oldCement.setExit("west", oldHouse);
+        oldCement.setExit("east", supplyHouse);
+        
+        graveYard.setExit("south", oldCement);
+        graveYard.setExit("north", brokenLab);
+        graveYard.setExit("west", oldGrave);
+        brokenLab.setExit("south", graveYard);
+        oldGrave.setExit("east", graveYard);
+        
+        oldHouse.setExit("east", oldCement);
+        oldHouse.setExit("west", oldSmoke);
+        oldHouse.setExit("south", stars);
+        oldSmoke.setExit("east", oldHouse);
+        stars.setExit("north", oldHouse);
+        
+        supplyHouse.setExit("west", oldCement);
+        supplyHouse.setExit("down", supplyBase);
+        supplyBase.setExit("up", supplyHouse);
+        supplyBase.setExit("east", hidden);
+        hidden.setExit("west", supplyBase);
+        hidden.setExit("up", kings);
+        kings.setExit("down", hidden);
+        
 
-        pub.setExit("east", outside);
-
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
-
-        office.setExit("west", lab);
-
-        currentRoom = outside;  // start game outside
+        currentRoom = cementEnt;  // start game outside
     }
 
     /**
@@ -117,6 +139,15 @@ public class Game
 
             case QUIT:
                 wantToQuit = quit(command);
+                break;
+            case LOOK:
+                look();
+                break;
+            case COMMANDS:
+                commands();
+                break;
+            case WHISTLE:
+                whistle();
                 break;
         }
         return wantToQuit;
@@ -178,5 +209,29 @@ public class Game
         else {
             return true;  // signal that we want to quit
         }
+    }
+    
+    /**
+     * "look" was entered. Gets the long description for the user
+     */
+    private void look()
+    {
+        System.out.println(currentRoom.getLongDescription());
+    }
+    
+    /**
+     * Prints out list of commands
+     */
+    private void commands()
+    {
+        System.out.println("Type: help, go, look, whistle or quit");
+    }
+    
+    /**
+     * allows player to whistle.
+     */
+    private void whistle()
+    {
+        System.out.println("You whistle but no noise comes out");
     }
 }
